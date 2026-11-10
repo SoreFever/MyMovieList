@@ -9,7 +9,7 @@ export default function TmdbAttribution() {
       }}
     >
       <img
-        src={"@/public/tmdb_logo.svg"}
+        src="/tmdb_logo.svg"
         alt="TMDB logo"
         style={{ height: 14, width: "auto", display: "inline-block" }}
       />
