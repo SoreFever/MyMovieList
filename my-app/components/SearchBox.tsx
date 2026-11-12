@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import PosterGrid from "./PosterGrid";
+import PosterImage from "./PosterImage";
 
 type Movie = {
   id: number;
@@ -37,67 +39,43 @@ export default function SearchBox() {
   }, [query]);
 
   return (
-    <div style={{ padding: "0 24px" }}>
-      <div style={{ maxWidth: 500, margin: "2rem auto 0" }}>
+    <div className="px-6">
+      <div className="mx-auto mt-8 max-w-[500px]">
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search movies..."
-          style={{ width: "100%", padding: 8 }}
+          className="w-full p-2"
         />
       </div>
 
       {loading && <p>Searching...</p>}
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))",
-          gap: 16,
-          marginTop: 24,
-        }}
-      >
+      <PosterGrid>
         {results.map((m) => (
           <Link
             key={m.id}
             href={`/movie/${m.id}`}
-            style={{ textDecoration: "none", color: "inherit" }}
+            className="text-inherit no-underline"
           >
             <div>
-              {m.poster_path ? (
-                <img
-                  src={`https://image.tmdb.org/t/p/w342${m.poster_path}`}
-                  alt={m.title}
-                  style={{ width: "100%", borderRadius: 8, display: "block" }}
-                />
-              ) : (
-                <div
-                  style={{
-                    width: "100%",
-                    aspectRatio: "2/3",
-                    background: "#333",
-                    borderRadius: 8,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: 12,
-                    color: "#aaa",
-                  }}
-                >
-                  No poster
-                </div>
-              )}
-              <div style={{ marginTop: 6 }}>
-                <strong style={{ fontSize: 14 }}>{m.title}</strong>
-                <div style={{ fontSize: 12, opacity: 0.7 }}>
+              <PosterImage
+                path={m.poster_path}
+                alt={m.title}
+                fallbackText="No poster"
+              />
+
+              <div className="mt-1.5">
+                <strong className="text-sm">{m.title}</strong>
+                <div className="text-xs opacity-70">
                   {m.release_date?.slice(0, 4)}
                 </div>
               </div>
             </div>
           </Link>
         ))}
-      </div>
+      </PosterGrid>
     </div>
   );
 }
