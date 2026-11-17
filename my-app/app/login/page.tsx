@@ -1,15 +1,28 @@
 "use client";
 import { supabase } from "@/app/lib/supabase";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    await supabase.auth.signInWithPassword({ email: "", password: "" });
-    console.log({ email, password });
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      console.log(error);
+      return;
+    }
+
+    setEmail("");
+    setPassword("");
+    router.push("/");
   }
 
   return (
@@ -33,5 +46,5 @@ export default function LoginPage() {
         <button type="submit">Log in</button>
       </form>
     </main>
-  )
+  );
 }

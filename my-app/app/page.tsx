@@ -1,12 +1,11 @@
+import AuthLinks from "@/components/AuthLinks";
 import SearchBox from "@/components/SearchBox";
-import Link from "next/link";
 
-export default function Home() {
+export default async function Home() {
   return (
     <div>
-      <Link href="/signup">Sign up</Link>
-      <Link href="/login">Login</Link>
+      <AuthLinks />
       <SearchBox />
     </div>
-  )
+  );
 }
