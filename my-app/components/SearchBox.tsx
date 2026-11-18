@@ -5,16 +5,19 @@ import Link from "next/link";
 import PosterGrid from "./PosterGrid";
 import PosterImage from "./PosterImage";
 
-type Movie = {
+type SearchResult = {
   id: number;
-  title: string;
-  release_date: string;
+  media_type: "movie" | "tv" | "person";
+  title?: string;
+  name?: string;
+  release_date?: string;
+  first_air_date?: string;
   poster_path: string | null;
 };
 
 export default function SearchBox() {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<Movie[]>([]);
+  const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -29,7 +32,12 @@ export default function SearchBox() {
       try {
         const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
         const data = await res.json();
-        setResults(data.results ?? []);
+        setResults(
+          (data.results ?? []).filter(
+            (r: SearchResult) =>
+              r.media_type == "movie" || r.media_type == "tv",
+          ),
+        );
       } finally {
         setLoading(false);
       }
@@ -45,7 +53,7 @@ export default function SearchBox() {
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search movies..."
+          placeholder="Search movies and TV..."
           className="w-full p-2"
         />
       </div>
@@ -53,28 +61,34 @@ export default function SearchBox() {
       {loading && <p>Searching...</p>}
 
       <PosterGrid>
-        {results.map((m) => (
-          <Link
-            key={m.id}
-            href={`/movie/${m.id}`}
-            className="text-inherit no-underline"
-          >
-            <div>
-              <PosterImage
-                path={m.poster_path}
-                alt={m.title}
-                fallbackText="No poster"
-              />
+        {results.map((m) => {
+          const title = m.title ?? m.name ?? "Untitled";
+          const date = m.release_date ?? m.first_air_date;
 
-              <div className="mt-1.5">
-                <strong className="text-sm">{m.title}</strong>
-                <div className="text-xs opacity-70">
-                  {m.release_date?.slice(0, 4)}
+          return (
+            <Link
+              key={`${m.media_type}-${m.id}`}
+              href={`/${m.media_type}/${m.id}`}
+              className="text-inherit no-underline"
+            >
+              <div>
+                <PosterImage
+                  path={m.poster_path}
+                  alt={title}
+                  fallbackText="No poster"
+                />
+
+                <div className="mt-1.5">
+                  <strong className="text-sm">{title}</strong>
+                  <div className="text-xs opacity-70">
+                    {date?.slice(0, 4)} ·{" "}
+                    {m.media_type === "tv" ? "TV" : "Movie"}
+                  </div>
                 </div>
               </div>
-            </div>
-          </Link>
-        ))}
+            </Link>
+          );
+        })}
       </PosterGrid>
     </div>
   );

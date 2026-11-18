@@ -5,7 +5,7 @@ export async function GET(req: NextRequest) {
   if (!query) return NextResponse.json({ results: [] });
 
   const res = await fetch(
-    `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(query)}&include_adult=false`,
+    `https://api.themoviedb.org/3/search/multi?query=${encodeURIComponent(query)}&include_adult=false`,
     {
       headers: {
         Authorization: `Bearer ${process.env.TMDB_READ_TOKEN}`,
