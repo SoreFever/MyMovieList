@@ -1,3 +1,4 @@
+import AddEntryButton from "@/components/AddEntryButton";
 import PosterGrid from "@/components/PosterGrid";
 import PosterImage from "@/components/PosterImage";
 import Link from "next/link";
@@ -114,6 +115,14 @@ async function ShowContent({ params }: { params: Promise<{ id: string }> }) {
 
           <h3 className="mt-6 text-xl font-semibold">Overview</h3>
           <p className="mt-2">{show.overview || "No overview available."}</p>
+          <AddEntryButton
+            item={{
+              tmdb_id: show.id,
+              media_type: "tv",
+              title: show.name,
+              poster_path: show.poster_path,
+            }}
+          />
         </div>
       </div>
 
