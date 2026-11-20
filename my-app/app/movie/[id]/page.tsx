@@ -1,4 +1,5 @@
 import AddEntryButton from "@/components/AddEntryButton";
+import DeleteEntryButton from "@/components/DeleteEntryButton";
 import PosterGrid from "@/components/PosterGrid";
 import PosterImage from "@/components/PosterImage";
 import Link from "next/link";
@@ -110,6 +111,7 @@ async function MovieContent({ params }: { params: Promise<{ id: string }> }) {
               poster_path: movie.poster_path,
             }}
           />
+          <DeleteEntryButton id={id} media_type="movie"/>
         </div>
       </div>
 
