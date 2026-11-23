@@ -122,6 +122,7 @@ async function ShowContent({ params }: { params: Promise<{ id: string }> }) {
               media_type: "tv",
               title: show.name,
               poster_path: show.poster_path,
+              release_date: show.first_air_date
             }}
           />
           <DeleteEntryButton id={id} media_type="tv"/>

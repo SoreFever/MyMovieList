@@ -109,6 +109,7 @@ async function MovieContent({ params }: { params: Promise<{ id: string }> }) {
               media_type: "movie",
               title: movie.title,
               poster_path: movie.poster_path,
+              release_date: movie.release_date
             }}
           />
           <DeleteEntryButton id={id} media_type="movie"/>

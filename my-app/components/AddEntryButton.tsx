@@ -6,6 +6,7 @@ type Item = {
   title?: string;
   name?: string;
   poster_path: string | null;
+  release_date: string | null;
 };
 
 export default function AddEntryButton({item}: {item: Item}) {

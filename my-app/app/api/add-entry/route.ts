@@ -27,10 +27,7 @@ export async function POST(req: NextRequest) {
     media_type: item.media_type,
     title: item.title,
     poster_path: item.poster_path,
-    // status: item.status,
-    // rating: item.rating,
-    // episodes_watched: item.episodes_watched,
-    // notes: item.notes,
+    release_date: item.release_date,
   });
 
   if (error?.code === "23505") {

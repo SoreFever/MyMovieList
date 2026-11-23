@@ -23,7 +23,10 @@ export default function AuthLinks() {
   }, []);
 
   return loggedIn ? (
-    <SignOutButton />
+    <div>
+      <SignOutButton />
+      <Link href="/mylist">My List</Link>
+    </div>
   ) : (
     <>
       <Link href="/signup">Sign up</Link>
