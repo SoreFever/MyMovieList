@@ -1,12 +1,10 @@
 import { createClient } from "../lib/supabase-server";
-import PosterGrid from "@/components/PosterGrid";
 import Link from "next/link";
 import PosterImage from "@/components/PosterImage";
 import { redirect } from "next/navigation";
-import { connection } from "next/server";
 
 type SearchResult = {
-  id: number;
+  tmdb_id: number;
   media_type: "movie" | "tv";
   title?: string;
   release_date?: string;
@@ -48,9 +46,9 @@ export default async function MyList() {
           const year = m.release_date?.slice(0, 4);
 
           return (
-            <tr key={`${m.media_type}-${m.id}`} className="border-b">
+            <tr key={`${m.media_type}-${m.tmdb_id}`} className="border-b">
               <td className="py-2 pr-3">
-                <Link href={`/${m.media_type}/${m.id}`}>
+                <Link href={`/${m.media_type}/${m.tmdb_id}`}>
                   <div className="w-12">
                     <PosterImage
                       path={m.poster_path}
@@ -61,14 +59,14 @@ export default async function MyList() {
                 </Link>
               </td>
               <td>
-                <Link href={`${m.media_type}/${m.id}`} className="font-medium">
+                <Link href={`${m.media_type}/${m.tmdb_id}`} className="font-medium">
                   {title}
                 </Link>
               </td>
               <td>{year}</td>
               <td>{m.media_type === "tv" ? "TV" : "Movie"}</td>
               <td>
-                <Link href={`/mylist/edit/${m.media_type}/${m.id}`}>Edit</Link>
+                <Link href={`/mylist/edit/${m.media_type}/${m.tmdb_id}`}>Edit</Link>
               </td>
             </tr>
           );

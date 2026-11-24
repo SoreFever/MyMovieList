@@ -27,10 +27,50 @@ export async function PATCH(
     );
   }
 
+  const STATUS_LABEL = {
+  plan_to_watch: "Plan to Watch",
+  watching: "Watching",
+  completed: "Completed",
+  dropped: "Dropped",
+};
+type Status = keyof typeof STATUS_LABEL;
+
+const RATING = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
+type Rating = (typeof RATING)[number];
+
   // Only allow fields you actually want to edit
-  // Example
-  const { title } = body;
-  const updates = { title }; // Add other editable fields here
+  const { status, rating, episodes, notes } = body;
+  const updates:  { 
+    status?: Status;
+    rating?: Rating | null;
+    episodes?: number | null,
+    notes?: string
+   } = {};
+  
+  if (status !== undefined) {
+    if (!(status in STATUS_LABEL)) {
+      return NextResponse.json({error: "Invalid status"},{status: 400})
+    }
+    updates.status;
+  }
+
+  if (rating !== undefined) {
+    if (rating !== null && !RATING.includes(rating)) {
+      return NextResponse.json({error: "Invalid rating"},{status: 400})
+    }
+    updates.rating;
+  }
+
+  if (episodes !== undefined) {
+    if (episodes !== null && (!Number.isInteger(episodes) || episodes < 0)) {
+      return NextResponse.json({error: "Invalid episodes"},{status: 400})
+    }
+    updates.episodes;
+  }
+
+  if (Object.keys(updates).length === 0) {
+    return NextResponse.json({error: "No fields to update"},{status: 400})
+  }
 
   const { data, error } = await supabase
     .from("list_entries")
@@ -38,7 +78,7 @@ export async function PATCH(
     .eq("id", id)
     .eq("user_id", user.id)
     .select()
-    .single();
+    .maybeSingle();
 
   if (error) {
     console.error("Update failed:", error.message);
