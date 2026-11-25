@@ -28,16 +28,21 @@ export async function DELETE(
     );
   }
 
-  const { error } = await supabase
+  const { error, data } = await supabase
     .from("list_entries")
-    .delete({ count: "exact" })
+    .delete()
     .match({ user_id: user.id, tmdb_id: id, media_type: media_type })
-    .select("id");
+    .select()
+    .maybeSingle();
 
   if (error) {
     console.log(error.message);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ success: true }, { status: 200 });
+  if (!data) {
+    return NextResponse.json({ error: "Entry not found" }, { status: 404 });
+  }
+
+  return NextResponse.json(data, { status: 200 });
 }

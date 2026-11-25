@@ -2,34 +2,15 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Entry, Status, Rating } from "@/types";
+import { STATUS_LABEL, RATING } from "@/constants";
 
-const STATUS_LABEL = {
-  plan_to_watch: "Plan to Watch",
-  watching: "Watching",
-  completed: "Completed",
-  dropped: "Dropped",
-};
-type Status = keyof typeof STATUS_LABEL;
-
-const RATING = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
-type Rating = (typeof RATING)[number];
-
-type Entry = {
-  id: string;
-  tmdb_id: string;
-  media_type: string;
-  status: Status;
-  rating: Rating | null;
-  episodes: number | null;
-  notes: string | null ;
-}
-
-export default function EditEntry({entry}:{entry: Entry}) {
+export default function EditEntry({ entry }: { entry: Entry }) {
   const router = useRouter();
 
   const [status, setStatus] = useState<Status>(entry.status);
   const [rating, setRating] = useState<Rating | null>(entry.rating);
-  const [episodes, setEpisodes] = useState<number | null>(entry.episodes);
+  const [episodes, setEpisodes] = useState<number | null>(entry.episodes_watched);
   const [notes, setNotes] = useState(entry.notes ?? "");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -39,11 +20,14 @@ export default function EditEntry({entry}:{entry: Entry}) {
     setSaving(true);
     setError(null);
 
-    const res = await fetch(`/api/update-entry/${entry.media_type}/${entry.tmdb_id}`, {
-      method: "PATCH",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({status, rating, episodes, notes})
-    })
+    const res = await fetch(
+      `/api/update-entry/${entry.media_type}/${entry.tmdb_id}`,
+      {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status, rating, episodes, notes }),
+      },
+    );
 
     setSaving(false);
 
@@ -71,10 +55,9 @@ export default function EditEntry({entry}:{entry: Entry}) {
       </select>
       <input
         type="number"
-        min={0}
         value={episodes ?? ""}
         onChange={(e) =>
-          setEpisodes(e.target.value === "" ? null : Number(e.target.value))
+          setEpisodes(e.target.value === "" ? 0 : Number(e.target.value))
         }
       />
 

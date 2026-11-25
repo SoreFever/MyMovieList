@@ -1,11 +1,20 @@
 import { createClient } from "@/app/lib/supabase-server";
 import { NextRequest, NextResponse } from "next/server";
+import { Status, Rating } from "@/types";
+import { STATUS_LABEL, RATING } from "@/constants";
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string; media_type: string }> },
 ) {
-  const { id } = await params;
+  const { id, media_type } = await params;
+  if (!id) {
+    return NextResponse.json({ error: "Missing tmdb id." }, { status: 400 });
+  }
+  if (!media_type) {
+    return NextResponse.json({ error: "Missing media type." }, { status: 400 });
+  }
+
   const supabase = await createClient();
   const {
     data: { user },
@@ -27,56 +36,54 @@ export async function PATCH(
     );
   }
 
-  const STATUS_LABEL = {
-  plan_to_watch: "Plan to Watch",
-  watching: "Watching",
-  completed: "Completed",
-  dropped: "Dropped",
-};
-type Status = keyof typeof STATUS_LABEL;
-
-const RATING = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
-type Rating = (typeof RATING)[number];
-
   // Only allow fields you actually want to edit
   const { status, rating, episodes, notes } = body;
-  const updates:  { 
+  const updates: {
     status?: Status;
     rating?: Rating | null;
-    episodes?: number | null,
-    notes?: string
-   } = {};
-  
+    episodes_watched?: number | null;
+    notes?: string;
+  } = {};
+
   if (status !== undefined) {
     if (!(status in STATUS_LABEL)) {
-      return NextResponse.json({error: "Invalid status"},{status: 400})
+      return NextResponse.json({ error: "Invalid status" }, { status: 400 });
     }
-    updates.status;
+    updates.status = status;
   }
 
   if (rating !== undefined) {
     if (rating !== null && !RATING.includes(rating)) {
-      return NextResponse.json({error: "Invalid rating"},{status: 400})
+      return NextResponse.json({ error: "Invalid rating" }, { status: 400 });
     }
-    updates.rating;
+    updates.rating = rating;
   }
 
   if (episodes !== undefined) {
-    if (episodes !== null && (!Number.isInteger(episodes) || episodes < 0)) {
-      return NextResponse.json({error: "Invalid episodes"},{status: 400})
+    if (
+      episodes !== null &&
+      (!Number.isInteger(episodes) || episodes < 0)
+    ) {
+      return NextResponse.json({ error: "Invalid episodes" }, { status: 400 });
     }
-    updates.episodes;
+    updates.episodes_watched = episodes;
+  }
+
+  if (notes !== undefined) {
+    if (typeof notes !== "string") {
+      return NextResponse.json({ error: "Invalid notes" }, { status: 400 });
+    }
+    updates.notes = notes;
   }
 
   if (Object.keys(updates).length === 0) {
-    return NextResponse.json({error: "No fields to update"},{status: 400})
+    return NextResponse.json({ error: "No fields to update" }, { status: 400 });
   }
 
   const { data, error } = await supabase
     .from("list_entries")
     .update(updates)
-    .eq("id", id)
-    .eq("user_id", user.id)
+    .match({ user_id: user.id, tmdb_id: id, media_type: media_type })
     .select()
     .maybeSingle();
 

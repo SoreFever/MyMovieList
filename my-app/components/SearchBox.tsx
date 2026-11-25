@@ -4,16 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import PosterGrid from "./PosterGrid";
 import PosterImage from "./PosterImage";
-
-type SearchResult = {
-  id: number;
-  media_type: "movie" | "tv" | "person";
-  title?: string;
-  name?: string;
-  release_date?: string;
-  first_air_date?: string;
-  poster_path: string | null;
-};
+import { SearchResult } from "@/types";
 
 export default function SearchBox() {
   const [query, setQuery] = useState("");

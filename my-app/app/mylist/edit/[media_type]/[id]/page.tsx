@@ -5,9 +5,9 @@ import EditEntry from "./EditEntry";
 export default async function EditPage({
   params,
 }: {
-  params: Promise<{ media_type: string; tmdb_id: string }>;
+  params: Promise<{ id: string; media_type: string }>;
 }) {
-  const { media_type, tmdb_id } = await params;
+  const { id, media_type } = await params;
   const supabase = await createClient();
 
   const {
@@ -17,10 +17,10 @@ export default async function EditPage({
 
   const { data: entry } = await supabase
     .from("list_entries")
-    .select("id, tmdb_id, media_type, status, rating, episodes, notes")
-    .eq("user_id", user.id)
-    .eq("media_type", media_type)
-    .eq("tmdb_id", Number(tmdb_id))
+    .select(
+      "id, tmdb_id, media_type, title, poster_path, status, rating, episodes_watched, notes, release_date",
+    )
+    .match({ user_id: user.id, tmdb_id: id, media_type: media_type })
     .maybeSingle();
 
   if (!entry) notFound();
