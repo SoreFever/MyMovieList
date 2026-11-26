@@ -3,8 +3,17 @@ import PosterImage from "@/components/PosterImage";
 import { redirect } from "next/navigation";
 import { Entry } from "@/types";
 import Link from "next/link";
+import { Suspense } from "react";
 
-export default async function MyList() {
+export default function MyListPage() {
+  return (
+    <Suspense fallback={<p className="mt-6">Loading...</p>}>
+      <MyList />
+    </Suspense>
+  );
+}
+
+async function MyList() {
   const supabase = await createClient();
   const {
     data: { user },
