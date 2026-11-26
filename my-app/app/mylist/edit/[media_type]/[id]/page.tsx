@@ -1,8 +1,21 @@
 import { createClient } from "@/app/lib/supabase-server";
 import { notFound, redirect } from "next/navigation";
 import EditEntry from "./EditEntry";
+import { Suspense } from "react";
 
-export default async function EditPage({
+export default function EditPage({
+  params,
+}: {
+  params: Promise<{ id: string; media_type: string }>;
+}) {
+  return (
+    <Suspense fallback={<p className="mt-6">Loading...</p>}>
+      <EditDetails params={params} />
+    </Suspense>
+  );
+}
+
+async function EditDetails({
   params,
 }: {
   params: Promise<{ id: string; media_type: string }>;
