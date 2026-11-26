@@ -22,3 +22,37 @@ export type Entry = {
   notes: string | null;
   release_date: string;
 };
+export type CastMember = {
+  id: number;
+  name: string;
+  character: string;
+  profile_path: string | null;
+  order: number;
+};
+export type MediaDetail = {
+  id: number;
+  title?: string;
+  name?: string;
+  tagline: string;
+  overview: string;
+  release_date?: string;
+  first_air_date?: string;
+  runtime?: number | null;
+  episode_run_time?: number[];
+  number_of_seasons?: number;
+  number_of_episodes?: number;
+  vote_average: number;
+  poster_path: string | null;
+  genres: { id: number; name: string }[];
+  credits: {
+    cast: CastMember[];
+  };
+};
+export type Item = {
+  tmdb_id: number;
+  media_type: "movie" | "tv";
+  title?: string;
+  name?: string;
+  poster_path: string | null;
+  release_date?: string | null;
+};

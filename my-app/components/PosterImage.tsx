@@ -1,6 +1,6 @@
 type PosterImageProps = {
   path: string | null;
-  alt: string;
+  alt?: string;
   size?: "w185" | "w342" | "w500";
   fallbackText?: string;
 };
