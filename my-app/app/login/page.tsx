@@ -1,10 +1,11 @@
 "use client";
 import { supabase } from "@/app/lib/supabase";
-import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { redirect } from "next/navigation";
 import { useState } from "react";
 
 export default function LoginPage() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -22,7 +23,7 @@ export default function LoginPage() {
 
     setEmail("");
     setPassword("");
-    router.push("/");
+    redirect("/")
   }
 
   return (
@@ -43,8 +44,9 @@ export default function LoginPage() {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button type="submit">Log in</button>
+        <Button type="submit">Log in</Button>
       </form>
+      <Link href={"/signup"}>Sign up</Link>
     </main>
   );
 }
